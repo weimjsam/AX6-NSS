@@ -14,23 +14,12 @@ on:
         type: choice
         default: RedMi-AX6_plus_imm
         options:
-          #- aliyun_ap8220_immwrt
-          #- cmcc_rax3000m_immwrt
-          #- jdcloud_ax6000_immwrt
-          #- jdcloud_ipq60xx_immwrt
-          #- jdcloud_ipq60xx_libwrt
-          #- n1_immwrt
-          #- redmi_ax5_immwrt
           - RedMi-AX6_plus_imm
           - RedMi-AX6_plus_libwrt
-          #- redmi_ax6000_immwrt21
-          #- zn_m2_immwrt
-          #- zn_m2_libwrt
-          #- x64_immwrt
 
 
-  schedule:
-    - cron: 43 3 * * 4
+  # schedule:
+  #   - cron: 43 3 * * 4
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -94,7 +83,11 @@ jobs:
           cp -rf config/compilecfg wrt_core/
           cp -rf config/*.config wrt_core/deconfig/
           chmod +x $DIY_my_SH
-          ./sh/build.sh ${{ inputs.model || 'RedMi-AX6_plus_imm'}}
+          ./sh/build.sh ${{ inputs.model || 'RedMi-AX6_plus_imm' }} & PID=$!
+          sleep 10
+          cp -f config/RedMi-AX6_plus_imm.config action_build/.config
+          
+          wait $PID
 
 
       - name: 获取内核版本
