@@ -83,12 +83,7 @@ jobs:
           cp -rf config/compilecfg wrt_core/
           cp -rf config/*.config wrt_core/deconfig/
           chmod +x $DIY_my_SH
-          ./sh/build.sh ${{ inputs.model || 'RedMi-AX6_plus_imm' }} & PID=$!
-          sleep 10
-          cp -f config/RedMi-AX6_plus_imm.config action_build/.config
-          
-          wait $PID
-
+          ./sh/build.sh ${{ inputs.model || 'RedMi-AX6_plus_imm' }} 
 
       - name: 获取内核版本
         run: |
