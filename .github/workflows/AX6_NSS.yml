@@ -15,11 +15,6 @@ on:
         default: RedMi-AX6_plus_imm
         options:
           - RedMi-AX6_plus_imm
-          - RedMi-AX6_plus_libwrt
-
-
-  # schedule:
-  #   - cron: 43 3 * * 4
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
