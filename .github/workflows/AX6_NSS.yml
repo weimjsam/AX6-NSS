@@ -1,4 +1,4 @@
-name: Release_AX6_imm_nss
+name: Release_Redmi-AX6 plus（imm） 
 run-name: Release - ${{ inputs.model || 'RedMi-AX6_plus_imm'}}
 
 permissions:
@@ -15,6 +15,11 @@ on:
         default: RedMi-AX6_plus_imm
         options:
           - RedMi-AX6_plus_imm
+          - RedMi-AX6_plus_libwrt
+
+
+  # schedule:
+  #   - cron: 43 3 * * 4
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,20 +38,9 @@ jobs:
 
       - name: 构建系统设置
         run: |
-          # 1. 針對 Ubuntu 24.04 全新 DEB822 源格式，精確替換為阿里雲高速鏡像，大幅提升下載頻寬
-          if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then
-            sudo sed -i 's/://ubuntu.com' /etc/apt/sources.list.d/ubuntu.sources
-            sudo sed -i 's/://ubuntu.com' /etc/apt/sources.list.d/ubuntu.sources
-          fi
-          
-          # 2. 修改 APT 預設配置，強制不下載無效的推薦安裝包（--no-install-recommends）並關閉代理干擾
-          sudo bash -c 'echo "APT::Install-Recommends \"false\";" > /etc/apt/apt.conf.d/99no-recommends'
-          
-          # 3. 執行官方環境初始化腳本（此時將享受阿里雲高速與瘦身優化）
           sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
-          
-          # 4. 安裝額外套件（保持原樣）
-          sudo -E apt -yqq install dos2unix libfuse-dev
+          sudo -E apt -yqq install dos2unix
+          sudo -E apt -yqq install libfuse-dev
           sudo -E apt -yqq autoremove --purge
           sudo -E apt -yqq autoclean
           sudo -E apt -yqq clean
