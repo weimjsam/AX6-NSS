@@ -592,7 +592,7 @@ rm -f "./etc/rc.local.orig" "./etc/first_run.sh" "./etc/part_size"
 rm -rf "./opt/docker" && ln -sf "/mnt/${EMMC_NAME}${PARTITION_NAME}4/docker" "./opt/docker"
 rm -f ./etc/bench.log
 cat >>./etc/crontabs/root <<EOF
-37 5 * * * /etc/coremark.sh
+#37 5 * * * /etc/coremark.sh
 EOF
 
 sed -e 's/ttyAMA0/ttyAML0/' -i ./etc/inittab
