@@ -109,8 +109,13 @@ enable_affinity() {
     set_affinity 'edma_rxdesc' 3 1
     set_affinity 'edma_misc' 3 1
 
-    # assign nss_queue0 to 2-3
-    set_affinity 'nss_queue0' 2-3 1
+    # assign nss_queue0
+    set_affinity 'nss_queue0' 2 1
+    set_affinity 'nss_queue0' 3 2
+    set_affinity 'nss_empty_buf_sos' 3 1
+    set_affinity 'nss_empty_buf_sos' 3 2
+    set_affinity 'nss_empty_buf_queue' 3 1
+    set_affinity 'nss_empty_buf_queue' 3 2
 
     # assign Copy Engine
     set_affinity 'bam_dma' 1 1
