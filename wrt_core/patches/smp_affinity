@@ -121,6 +121,17 @@ enable_affinity() {
     set_affinity 'bam_dma' 1 1
     set_affinity 'bam_dma' 2 2
     set_affinity 'bam_dma' 3 3
+
+    echo 65535 > /proc/sys/net/netfilter/nf_conntrack_max 2>/dev/null 
+    echo 180 > /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established 2>/dev/null 
+
+    # 網卡隊列 RPS/XPS/rps_flow_cnt 擴充優化
+    for dev in /sys/class/net/*/queues/rx-*/rps_cpus; do echo "f" > "$dev" 2>/dev/null; done
+    for dev in /sys/class/net/*/queues/rx-*/rps_flow_cnt; do echo "8192" > "$dev" 2>/dev/null; done
+    for dev in /sys/class/net/*/queues/tx-*/xps_cpus; do echo "f" > "$dev" 2>/dev/null; done
+    echo "65535" > "/proc/sys/net/core/rps_sock_flow_entries" 2>/dev/null 
+
+
 }
 
 boot() {
