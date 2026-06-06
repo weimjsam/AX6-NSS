@@ -550,7 +550,7 @@ if [ $BR_FLAG -eq 1 ];then
 fi
 
 cat >> ./etc/crontabs/root << EOF
-37 5 * * * /etc/coremark.sh
+#37 5 * * * /etc/coremark.sh
 EOF
 
 sed -e 's/ttyAMA0/ttyAML0/' -i ./etc/inittab
