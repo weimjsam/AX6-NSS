@@ -43,7 +43,7 @@ uci -q set dhcp.@dnsmasq[0].leasefile='/tmp/dhcp.leases'
 uci -q set dhcp.@dnsmasq[0].localservice='1'
 
 # 极限本地缓存及 TTL 锁定（确保小包解析零微秒本地直返）
-uci -q set dhcp.@dnsmasq[0].cachesize='9000'
+uci -q set dhcp.@dnsmasq[0].cachesize='10000'
 uci -q set dhcp.@dnsmasq[0].min_cache_ttl='3600'
 uci -q set dhcp.@dnsmasq[0].max_cache_ttl='86400'
 uci -q set dhcp.@dnsmasq[0].cache_ttl='86400'
