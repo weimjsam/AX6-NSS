@@ -49,7 +49,7 @@ uci -q set dhcp.@dnsmasq[0].max_cache_ttl='86400'
 uci -q set dhcp.@dnsmasq[0].cache_ttl='86400'
 
 # 性能防护与并发限制（控制 Dnsmasq 避免吃爆 NPU）
-uci -q set dhcp.@dnsmasq[0].dnsforwardmax='10'
+uci -q set dhcp.@dnsmasq[0].dnsforwardmax='20'
 uci -q set dhcp.@dnsmasq[0].ednspacket_max='1232'
 uci -q set dhcp.@dnsmasq[0].prefetch='1'
 uci -q set dhcp.@dnsmasq[0].prefetch_domain='1'
