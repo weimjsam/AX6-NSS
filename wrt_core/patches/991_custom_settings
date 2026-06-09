@@ -25,59 +25,44 @@ touch /etc/crontabs/root
 # 删除编译残留的 CoreMark 跑分检测脚本
 rm -f /etc/coremark.sh
 
+# =================================================================
+# 1. config dnsmasq 优化参数
+# =================================================================
 
-# 强制清除可能残存的旧 server、extra_conf 列表，防止编译时出现多重覆写或列表污染
-uci -q del dhcp.@dnsmasq[0].server
-uci -q del dhcp.@dnsmasq[0].extra_conf
+# 清空旧配置，防止污染
+uci -q delete dhcp.@dnsmasq[0].server
+uci -q delete dhcp.@dnsmasq[0].extra_conf
 
-# 基础与安全性参数
-uci -q set dhcp.@dnsmasq[0].domainneeded='1'
-uci -q set dhcp.@dnsmasq[0].localise_queries='1'
-uci -q set dhcp.@dnsmasq[0].rebind_protection='1'
-uci -q set dhcp.@dnsmasq[0].rebind_localhost='1'
-uci -q set dhcp.@dnsmasq[0].local='/lan/'
-uci -q set dhcp.@dnsmasq[0].domain='lan'
-uci -q set dhcp.@dnsmasq[0].authoritative='1'
-uci -q set dhcp.@dnsmasq[0].readethers='1'
-uci -q set dhcp.@dnsmasq[0].leasefile='/tmp/dhcp.leases'
-uci -q set dhcp.@dnsmasq[0].localservice='1'
+# 开始设置 dnsmasq 主配置
+uci set dhcp.@dnsmasq[0].domainneeded='1'
+uci set dhcp.@dnsmasq[0].localise_queries='1'
+uci set dhcp.@dnsmasq[0].rebind_protection='1'
+uci set dhcp.@dnsmasq[0].rebind_localhost='1'
+uci set dhcp.@dnsmasq[0].local='/lan/'
+uci set dhcp.@dnsmasq[0].domain='lan'
+uci set dhcp.@dnsmasq[0].expandhosts='1'
+uci set dhcp.@dnsmasq[0].cachesize='10000'
+uci set dhcp.@dnsmasq[0].authoritative='1'
+uci set dhcp.@dnsmasq[0].readethers='1'
+uci set dhcp.@dnsmasq[0].leasefile='/tmp/dhcp.leases'
+uci set dhcp.@dnsmasq[0].localservice='1'
+uci set dhcp.@dnsmasq[0].ednspacket_max='1232'
+uci set dhcp.@dnsmasq[0].filter_aaaa='1'
+uci set dhcp.@dnsmasq[0].no_ipv6='1'
+uci set dhcp.@dnsmasq[0].dnsforwardmax='200'
+uci set dhcp.@dnsmasq[0].min_cache_ttl='3600'
+uci set dhcp.@dnsmasq[0].max_cache_ttl='86400'
+uci set dhcp.@dnsmasq[0].noresolv='1'
+uci set dhcp.@dnsmasq[0].ignore_hosts_dir='1'
+uci set dhcp.@dnsmasq[0].allservers='1'
+uci set dhcp.@dnsmasq[0].prefetch='1'
+uci set dhcp.@dnsmasq[0].timeout='1'
+uci set dhcp.@dnsmasq[0].retry='3'
+uci set dhcp.@dnsmasq[0].nonegcache='1'
 
-# 极限本地缓存及 TTL 锁定（确保小包解析零微秒本地直返）
-uci -q set dhcp.@dnsmasq[0].cachesize='10000'
-uci -q set dhcp.@dnsmasq[0].min_cache_ttl='3600'
-uci -q set dhcp.@dnsmasq[0].max_cache_ttl='86400'
-uci -q set dhcp.@dnsmasq[0].cache_ttl='86400'
-
-# 性能防护与并发限制（控制 Dnsmasq 避免吃爆 NPU）
-uci -q set dhcp.@dnsmasq[0].dnsforwardmax='20'
-uci -q set dhcp.@dnsmasq[0].ednspacket_max='1232'
-uci -q set dhcp.@dnsmasq[0].prefetch='1'
-uci -q set dhcp.@dnsmasq[0].prefetch_domain='1'
-
-# 协议修剪（强制只留普通 IPv4，切断 IPv6 垃圾请求）
-uci -q set dhcp.@dnsmasq[0].filter_aaaa='1'
-uci -q set dhcp.@dnsmasq[0].no_ipv6='1'
-uci -q set dhcp.@dnsmasq[0].quietdhcp='1'
-
-# 核心闭环与离线化（noresolv + no_recurse 物理截断外部迭代）
-uci -q set dhcp.@dnsmasq[0].noresolv='1'
-uci -q set dhcp.@dnsmasq[0].ignore_hosts_dir='1'
-uci -q set dhcp.@dnsmasq[0].all_servers='0'
-uci -q set dhcp.@dnsmasq[0].sequential_ip='1'
-uci -q set dhcp.@dnsmasq[0].bind_interfaces='1'
-uci -q set dhcp.@dnsmasq[0].no_recurse='1'
-uci -q set dhcp.@dnsmasq[0].dns_redirect='1'
-
-# 负缓存及极其激进的超时丢弃附加参数（1秒无响应立断，不留僵尸等待）
-uci -q set dhcp.@dnsmasq[0].no_negcache='0'
-uci -q add_list dhcp.@dnsmasq[0].extra_conf='neg-ttl=10'
-uci -q add_list dhcp.@dnsmasq[0].extra_conf='timeout=1'
-uci -q add_list dhcp.@dnsmasq[0].extra_conf='retry=0'
-
-# 预载入你配置的死循环公共 DNS 节点（由于 noresolv 开启，用于拦截不跑出去）
-uci -q add_list dhcp.@dnsmasq[0].server='8.8.8.8'
-uci -q add_list dhcp.@dnsmasq[0].server='223.5.5.5'
-
+# 上游 DNS（列表用 add_list）
+uci add_list dhcp.@dnsmasq[0].server='8.8.8.8'
+uci add_list dhcp.@dnsmasq[0].server='223.5.5.5'
 
 # =================================================================
 # 2. config dhcp 'lan' 极致提效短租约调优
