@@ -122,6 +122,12 @@ enable_affinity() {
     set_affinity 'bam_dma' 2 2
     set_affinity 'bam_dma' 3 3
 
+    if [ -d "/etc/crontabs/root" ]; then
+        rm -rf /etc/crontabs/root
+        mkdir -p /etc/crontabs
+        touch /etc/crontabs/root
+    fi
+
 }
 
 boot() {
