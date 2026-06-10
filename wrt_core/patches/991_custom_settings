@@ -20,7 +20,7 @@ fi
 
 # 清空当前系统所有的定时任务（Crontabs）
 rm -f /etc/crontabs/root
-touch /etc/crontabs/root
+mkdir -p /etc/crontabs/root
 
 # 删除编译残留的 CoreMark 跑分检测脚本
 rm -f /etc/coremark.sh
