@@ -218,10 +218,9 @@ START=99
 
 boot() {
     sed -i '/drop_caches/d' /etc/crontabs/root
-    echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >>/etc/crontabs/root
+    echo "" >>/etc/crontabs/root
 
     sed -i '/wireguard_watchdog/d' /etc/crontabs/root
-
     local wg_ifname=$(wg show | awk '/interface/ {print $2}')
 
     if [ -n "$wg_ifname" ]; then
